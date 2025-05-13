@@ -1,6 +1,6 @@
 ---
 - name: SHOW IOSXE VERSION  
-  hosts: "{{ target_hosts|default('localhost') }}"
+  hosts: 10.40.180.24
   connection: local
   gather_facts: no
 
