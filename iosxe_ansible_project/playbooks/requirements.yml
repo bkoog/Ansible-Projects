@@ -1,8 +1,2 @@
-- src: https://github.com/CiscoDevNet/ansible-pyats
-  scm: git
-  name: ansible-pyats
-
-# - name: parse_genie
-#   src: https://github.com/clay584/parse_genie
-#   scm: git
-#   version: master
+collections:
+  - name: cisco.ios
