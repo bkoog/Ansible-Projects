@@ -1,6 +1,6 @@
 ---
 - name: SHOW IOSXE VERSION  
-  hosts: 10.40.180.24
+  hosts: iosxe
   gather_facts: no
 
   # ansible-playbook -i inventory.yml -e target_hosts=sandbox-iosxe-latest-1.cisco.com playbooks/show_version.yml
