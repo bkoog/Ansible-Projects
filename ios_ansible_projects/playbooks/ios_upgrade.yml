@@ -28,7 +28,7 @@
 
     - name: Check if image already exists in flash
       ios_command:
-        commands: "dir flash:"
+        commands: "show flash:"
       register: flash_contents
 
     - name: Set image_present fact
