@@ -6,26 +6,25 @@
 
   vars:
     ios_image: "c3560cx-universalk9-mz.152-7.E12.bin"
-    image_remote_path: "scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}/{{ ios_image }}"
     image_flash_path: "flash:{{ ios_image }}"
     boot_command: "boot system flash:{{ ios_image }}"
-    reload_delay: 15
+    reload_delay: 20
 
   tasks:
 
-   - name: Check current version
-  ios_facts:
-  register: ios_info
-  ignore_errors: yes
+    - name: Gather IOS facts
+      cisco.ios.ios_facts:
+      register: ios_info
+      ignore_errors: yes
 
-- name: Show raw ios_facts output
-  debug:
-    var: ios_info
+    - name: Show raw ios_facts output
+      debug:
+        var: ios_info
 
-- name: Print current IOS version (if available)
-  debug:
-    msg: "Current version is {{ ios_info.ansible_net_version }}"
-  when: ios_info.ansible_net_version is defined
+    - name: Print current IOS version if available
+      debug:
+        msg: "Current version is {{ ios_info.ansible_net_version }}"
+      when: ios_info.ansible_net_version is defined
 
     - name: Check if image already exists in flash
       ios_command:
@@ -36,19 +35,15 @@
       set_fact:
         image_present: "{{ ios_image in flash_contents.stdout[0] }}"
 
-    - name: Copy image to device via SCP if not present
-      when: not image_present
+    - name: Enable SCP server
       ios_config:
         lines:
-          - "ip scp server enable"
-          - "ip domain-name local"
-          - "crypto key generate rsa modulus 2048"
-        when: ansible_net_hostname is defined
+          - ip scp server enable
 
-    - name: Transfer image via SCP
+    - name: Transfer image to flash (if not present)
       when: not image_present
       ansible.netcommon.net_put:
-        src: "{{ image_remote_path }}"
+        src: "scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}/{{ ios_image }}"
         dest: "{{ image_flash_path }}"
         protocol: scp
 
@@ -67,14 +62,14 @@
       async: 10
       poll: 0
 
-    - name: Wait for device to come back
+    - name: Wait for switch to come back online
       wait_for_connection:
         delay: "{{ reload_delay }}"
         timeout: 300
 
-    - name: Gather facts after upgrade
-      ios_facts:
+    - name: Gather IOS facts after reload
+      cisco.ios.ios_facts:
 
-    - name: Verify version after upgrade
+    - name: Print upgraded version
       debug:
-        msg: "New version is {{ ansible_net_version }}"
+        msg: "New IOS version is {{ ansible_net_version }}"
