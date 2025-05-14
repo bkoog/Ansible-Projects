@@ -23,8 +23,8 @@
 
     - name: Print current IOS version if available
       debug:
-        msg: "Current version is {{ ios_info.ansible_net_version }}"
-      when: ios_info.ansible_net_version is defined
+        msg: "Current version is {{ ios_info.ansible_facts.ansible_net_version }}"
+      when: ios_info.ansible_facts.ansible_net_version is defined
 
     - name: Check if image already exists in flash
       ios_command:
