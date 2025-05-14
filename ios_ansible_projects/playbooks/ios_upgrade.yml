@@ -13,13 +13,19 @@
 
   tasks:
 
-    - name: Check current version
-      ios_facts:
-      register: ios_info
+   - name: Check current version
+  ios_facts:
+  register: ios_info
+  ignore_errors: yes
 
-    - name: Print current IOS version
-      debug:
-        msg: "Current version is {{ ios_info.ansible_net_version }}"
+- name: Show raw ios_facts output
+  debug:
+    var: ios_info
+
+- name: Print current IOS version (if available)
+  debug:
+    msg: "Current version is {{ ios_info.ansible_net_version }}"
+  when: ios_info.ansible_net_version is defined
 
     - name: Check if image already exists in flash
       ios_command:
