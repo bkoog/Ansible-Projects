@@ -1,1 +1,74 @@
+---
+- name: Upgrade IOS on Cisco 3560-CX to 15.2(7)E12
+  hosts: iosxe
+  gather_facts: no
+  connection: network_cli
 
+  vars:
+    ios_image: "c3560cx-universalk9-mz.152-7.E12.bin"
+    image_remote_path: "scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}/{{ ios_image }}"
+    image_flash_path: "flash:{{ ios_image }}"
+    boot_command: "boot system flash:{{ ios_image }}"
+    reload_delay: 15
+
+  tasks:
+
+    - name: Check current version
+      ios_facts:
+      register: ios_info
+
+    - name: Print current IOS version
+      debug:
+        msg: "Current version is {{ ios_info.ansible_net_version }}"
+
+    - name: Check if image already exists in flash
+      ios_command:
+        commands: "dir flash:"
+      register: flash_contents
+
+    - name: Set image_present fact
+      set_fact:
+        image_present: "{{ ios_image in flash_contents.stdout[0] }}"
+
+    - name: Copy image to device via SCP if not present
+      when: not image_present
+      ios_config:
+        lines:
+          - "ip scp server enable"
+          - "ip domain-name local"
+          - "crypto key generate rsa modulus 2048"
+        when: ansible_net_hostname is defined
+
+    - name: Transfer image via SCP
+      when: not image_present
+      ansible.netcommon.net_put:
+        src: "{{ image_remote_path }}"
+        dest: "{{ image_flash_path }}"
+        protocol: scp
+
+    - name: Set boot system to new image
+      ios_config:
+        lines:
+          - "{{ boot_command }}"
+        save_when: always
+
+    - name: Reload the switch
+      ios_command:
+        commands:
+          - reload
+        prompt: "Proceed with reload? [confirm]"
+        answer: "\n"
+      async: 10
+      poll: 0
+
+    - name: Wait for device to come back
+      wait_for_connection:
+        delay: "{{ reload_delay }}"
+        timeout: 300
+
+    - name: Gather facts after upgrade
+      ios_facts:
+
+    - name: Verify version after upgrade
+      debug:
+        msg: "New version is {{ ansible_net_version }}"
