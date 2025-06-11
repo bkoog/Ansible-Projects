@@ -35,9 +35,10 @@
       debug:
         msg: "{{ flash_contents.stdout[0] }}"
 
-    - name: Set image_present fact
-      set_fact:
-        image_present: "{{ ios_image in flash_contents.stdout[0] }}"
+    - name: Show flash output
+      debug:
+      msg: "{{ flash_contents.stdout[0] }}"
+      when: flash_contents.stdout | length > 0
 
     - name: Enable SCP server
       ios_config:
