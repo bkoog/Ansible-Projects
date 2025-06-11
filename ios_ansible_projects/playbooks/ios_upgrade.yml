@@ -30,14 +30,10 @@
       ios_command:
         commands: "dir flash:"
       register: flash_contents
-      
+    
     - name: Show flash output
       debug:
         msg: "{{ flash_contents.stdout[0] }}"
-
-    - name: Show flash output
-      debug:
-      msg: "{{ flash_contents.stdout[0] }}"
       when: flash_contents.stdout | length > 0
 
     - name: Enable SCP server
