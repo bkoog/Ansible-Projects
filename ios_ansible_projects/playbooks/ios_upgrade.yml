@@ -49,7 +49,7 @@
       delegate_to: localhost
       when: not image_present
       shell: >
-        sshpass -p '{{ ansible_password }}' scp -o StrictHostKeyChecking=no /tmp/{{ ios_image }} {{ ansible_user }}@{{ inventory_hostname }}:
+        sshpass -p '{{ ansible_password }}' scp -o StrictHostKeyChecking=no /tmp/{{ ios_image }} {{ ansible_user }}@{{ inventory_hostname }}:{{ ios_image }}
       environment:
         SSHPASS: "{{ ansible_password }}"
         
