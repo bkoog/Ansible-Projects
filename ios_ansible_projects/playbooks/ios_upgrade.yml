@@ -6,7 +6,7 @@
 
   vars:
     ios_image: "c3560cx-universalk9-mz.152-7.E12.bin"
-    image_flash_path: "{{ ios_image }}"
+    image_flash_path: "flash:/{{ ios_image }}"
     boot_command: "boot system flash:{{ ios_image }}"
     reload_delay: 20
 
@@ -49,7 +49,7 @@
       when: not image_present
       ansible.netcommon.net_put:
         src: "/tmp/{{ ios_image }}"
-        dest: "{{ ios_image }}"
+        dest: "flash:/{{ ios_image }}"
 
     - name: Set boot system to new image
       ios_config:
