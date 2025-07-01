@@ -51,7 +51,7 @@
 
     - name: Transfer image to flash (if not present)
       when: not image_present
-        ansible.netcommon.net_put:
+      ansible.netcommon.net_put:
         src: "scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}/{{ ios_image }}"
         dest: "{{ image_flash_path }}"
         protocol: scp
