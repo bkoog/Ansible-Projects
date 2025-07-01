@@ -48,7 +48,7 @@
     - name: Transfer IOS image to switch flash (if not present)
       when: not image_present
       ansible.netcommon.net_put:
-        src: "/home/bkoagel/{{ ios_image }}"    # Local path on your Ansible control node
+        src: "/tmp/{{ ios_image }}"    # Local path on your Ansible control node
         dest: "flash:/{{ ios_image }}"           # Destination on the switch
 
     - name: Set boot system to new image
