@@ -48,7 +48,7 @@
     - name: Transfer image to flash (if not present)
       when: not image_present
       ansible.netcommon.net_put:
-        src: "/home/bkoagel/{{ ios_image }}"
+        src: "/tmp/{{ ios_image }}"
         dest: "flash:{{ ios_image }}"
 
     - name: Set boot system to new image
