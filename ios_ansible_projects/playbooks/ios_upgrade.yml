@@ -6,7 +6,7 @@
 
   vars:
     ios_image: "c3560cx-universalk9-mz.152-7.E12.bin"
-    image_flash_path: "flash:/{{ ios_image }}"
+    image_flash_path: "{{ ios_image }}"
     boot_command: "boot system flash:{{ ios_image }}"
     reload_delay: 20
 
@@ -49,7 +49,7 @@
       delegate_to: localhost
       when: not image_present
       shell: >
-        sshpass -p '{{ ansible_password }}' scp -o StrictHostKeyChecking=no /tmp/{{ ios_image }} {{ ansible_user }}@{{ inventory_hostname }}:flash:/
+        sshpass -p '{{ ansible_password }}' scp -o StrictHostKeyChecking=no /tmp/{{ ios_image }} {{ ansible_user }}@{{ inventory_hostname }}:
       environment:
         SSHPASS: "{{ ansible_password }}"
         
