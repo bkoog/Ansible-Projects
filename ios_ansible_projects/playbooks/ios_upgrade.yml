@@ -47,12 +47,12 @@
 
     - name: Debug SCP path
       debug:
-        msg: "SCP path: scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}/home/bkoagel/{{ ios_image }}"
+        msg: "SCP path: scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}//home/bkoagel/{{ ios_image }}"
 
     - name: Transfer image to flash (if not present)
       when: not image_present
       ansible.netcommon.net_put:
-        src: "scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}/home/bkoagel/{{ ios_image }}"
+        src: "scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}//home/bkoagel/{{ ios_image }}"
         dest: "{{ image_flash_path }}"
         protocol: scp
 
