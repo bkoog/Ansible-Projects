@@ -5,7 +5,7 @@
   connection: network_cli
 
   vars:
-    ios_image: "c3560cx-universalk9-mz.152-7.E12"
+    ios_image: "c3560cx-universalk9-mz.152-7.E12.bin"
     image_flash_path: "flash:{{ ios_image }}"
     boot_command: "boot system flash:{{ ios_image }}"
     reload_delay: 20
