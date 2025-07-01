@@ -52,9 +52,8 @@
     - name: Transfer image to flash (if not present)
       when: not image_present
       ansible.netcommon.net_put:
-        src: "scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}//home/bkoagel/{{ ios_image }}"
-        dest: "{{ image_flash_path }}"
-        protocol: scp
+        src: "/home/bkoagel/{{ ios_image }}"
+        dest: "flash:{{ ios_image }}"
 
     - name: Set boot system to new image
       ios_config:
