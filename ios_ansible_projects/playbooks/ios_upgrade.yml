@@ -9,7 +9,7 @@
     image_flash_path: "{{ ios_image }}"
     boot_command: "boot system flash:{{ ios_image }}"
     reload_delay: 20
-
+    
   tasks:
 
     - name: Gather IOS facts
@@ -30,11 +30,11 @@
       ios_command:
         commands: "dir flash:"
       register: flash_contents
-      
+
     - name: Determine if image is present
       set_fact:
-       image_present: "{{ 'c3560cx-universalk9-mz.152-7.E12.bin' in flash_contents.stdout[0] }}"
-    
+        image_present: "{{ ios_image in flash_contents.stdout[0] }}"
+
     - name: Show flash output
       debug:
         msg: "{{ flash_contents.stdout[0] }}"
@@ -46,24 +46,25 @@
           - ip scp server enable
 
     - name: Copy IOS image from SCP server (pull from switch)
+      when: not image_present
       ios_command:
         commands:
-        - "copy scp://{{ scp_user }}@{{ scp_server }}/{{ ios_image }} flash:/{{ ios_image }}"
-      prompt: "Password:"
-      answer: "{{ scp_pass }}"
+          - "copy scp://{{ scp_user }}@{{ scp_server }}/{{ ios_image }} flash:/{{ ios_image }}"
+        prompt: "Password:"
+        answer: "{{ scp_pass }}"
 
     - name: Set boot system to new image
       ios_config:
-      lines:
-        - "{{ boot_command }}"
-      save_when: always
+        lines:
+          - "{{ boot_command }}"
+        save_when: always
 
     - name: Reload the switch
       ios_command:
-      commands:
-        - reload
-      prompt: "Proceed with reload? [confirm]"
-      answer: "\n"
+        commands:
+          - reload
+        prompt: "Proceed with reload? [confirm]"
+        answer: "\n"
       async: 10
       poll: 0
 
