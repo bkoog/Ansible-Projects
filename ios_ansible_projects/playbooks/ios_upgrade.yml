@@ -47,9 +47,8 @@
 
     - name: Copy IOS image from SCP server (pull from switch)
       when: not image_present
-      ios_command:
-        commands:
-          - "copy scp://{{ scp_user }}@{{ scp_server }}/{{ ios_image }} flash:/{{ ios_image }}"
+      cisco.ios.cli_command:
+        command: "copy scp://{{ scp_user }}@{{ scp_server }}/{{ ios_image }} flash:/{{ ios_image }}"
         prompt: "Password:"
         answer: "{{ scp_pass }}"
 
