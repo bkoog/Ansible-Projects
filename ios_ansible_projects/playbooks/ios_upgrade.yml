@@ -45,7 +45,7 @@
         lines:
           - ip scp server enable
 
- - name: Copy IOS image from SCP server (pull from switch)
+  - name: Copy IOS image from SCP server (pull from switch)
     ios_command:
       commands:
         - "copy scp://{{ scp_user }}@{{ scp_server }}/{{ ios_image }} flash:/{{ ios_image }}"
