@@ -30,6 +30,10 @@
       ios_command:
         commands: "dir flash:"
       register: flash_contents
+      
+    - name: Determine if image is present
+      set_fact:
+       image_present: "{{ 'c3560cx-universalk9-mz.152-7.E12.bin' in flash_output.stdout[0] }}"
     
     - name: Show flash output
       debug:
