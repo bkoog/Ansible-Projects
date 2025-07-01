@@ -45,21 +45,21 @@
         lines:
           - ip scp server enable
 
-  - name: Copy IOS image from SCP server (pull from switch)
-    ios_command:
-      commands:
+    - name: Copy IOS image from SCP server (pull from switch)
+      ios_command:
+        commands:
         - "copy scp://{{ scp_user }}@{{ scp_server }}/{{ ios_image }} flash:/{{ ios_image }}"
       prompt: "Password:"
       answer: "{{ scp_pass }}"
 
-  - name: Set boot system to new image
-    ios_config:
+    - name: Set boot system to new image
+      ios_config:
       lines:
         - "{{ boot_command }}"
       save_when: always
 
-  - name: Reload the switch
-    ios_command:
+    - name: Reload the switch
+      ios_command:
       commands:
         - reload
       prompt: "Proceed with reload? [confirm]"
