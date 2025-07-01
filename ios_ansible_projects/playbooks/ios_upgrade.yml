@@ -64,8 +64,8 @@
         - reload
       prompt: "Proceed with reload? [confirm]"
       answer: "\n"
-    async: 10
-    poll: 0
+       async: 10
+       poll: 0
 
     - name: Wait for switch to come back online
       wait_for_connection:
