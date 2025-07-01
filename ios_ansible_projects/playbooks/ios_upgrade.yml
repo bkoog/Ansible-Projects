@@ -62,8 +62,6 @@
       ios_command:
         commands:
           - reload
-        prompt: "Proceed with reload? [confirm]"
-        answer: "\n"
       async: 10
       poll: 0
 
