@@ -39,6 +39,10 @@
     - name: Gather facts for {{ inventory_hostname }}
       tags: pre-check, check-version, install, upgrade
       ios_facts:
+      
+    - name: Show memory facts
+      debug:
+      var: ansible_net_memories
   
     - name: Basic Facts for "{{ inventory_hostname }}"
       vars:
