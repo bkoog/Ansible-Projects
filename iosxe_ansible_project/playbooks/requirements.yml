@@ -1,2 +1,3 @@
-collections:
-  - name: cisco.ios
+roles:
+  - name: ansible-pyats
+    src: https://github.com/CiscoTestAutomation/ansible-pyats
