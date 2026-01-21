@@ -1,4 +1,4 @@
 roles:
   - name: ansible-pyats
-    src: https://github.com/CiscoTestAutomation/pyats
+    src: https://github.com/CiscoDevNet/ansible-pyats
     version: main
