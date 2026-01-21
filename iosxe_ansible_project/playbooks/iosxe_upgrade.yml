@@ -42,7 +42,8 @@
       
     - name: Show memory facts
       debug:
-      var: ansible_net_memories
+        var: ansible_net_memories
+
   
     - name: Basic Facts for "{{ inventory_hostname }}"
       vars:
