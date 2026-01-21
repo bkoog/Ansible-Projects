@@ -42,9 +42,14 @@
       
     - name: Show memory facts
       debug:
-        var: ansible_net_memories
+        msg: |
+      Device Model: {{ ansible_net_model | default('unknown') }}
+      Serial Number: {{ ansible_net_serialnum | default('unknown') }}
+      IOSXE Version: {{ ansible_net_version | default('unknown') }}
+      IOSXE Image: {{ ansible_net_image | default('unknown') }}
+      Free Memory (MB): {{ ansible_net_memories.main.free_mb | default('N/A') }}
+      Total Memory (MB): {{ ansible_net_memories.main.total_mb | default('N/A') }}
 
-  
     - name: Basic Facts for "{{ inventory_hostname }}"
       vars:
         msg: |
