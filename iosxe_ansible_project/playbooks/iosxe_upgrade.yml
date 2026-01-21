@@ -1,7 +1,7 @@
 ---
 
 - name: IOSXE Upgrade Playbook
-  hosts: cat8500-sw01
+  hosts: iosxe
   gather_facts: false
   connection: network_cli
 
