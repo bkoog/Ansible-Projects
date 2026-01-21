@@ -41,19 +41,17 @@
       ios_facts:
       
     - name: Basic Facts for "{{ inventory_hostname }}"
-      vars:
-        msg: |
-          Device Mode: {{ ansible_net_model }}
-          Serial Number: {{ ansible_net_serialnum }}
-          IOSXE Version: {{ ansible_net_version }}
-          IOSXE Image: {{ ansible_net_image }}
-          Free Memory (Mb): {{ ansible_net_memfree_mb }}
-          Total Memory (Mb): {{ ansible_net_memtotal_mb }}
-          Free Diskspace (kb): {{ ansible_net_filesystems_info[flash_dir]['spacefree_kb'] }}
-          Total Diskspace (kb): {{ ansible_net_filesystems_info[flash_dir]['spacetotal_kb'] }}
       debug:
-        msg: "{{ msg.split('\n') }}"
-      tags: pre-check, check-version, install
+        msg: |
+      Device Model: {{ ansible_net_model | default('unknown') }}
+      Serial Number: {{ ansible_net_serialnum | default('unknown') }}
+      IOSXE Version: {{ ansible_net_version | default('unknown') }}
+      IOSXE Image: {{ ansible_net_image | default('unknown') }}
+      Free Memory (MB): {{ ansible_net_memories.main.free_mb | default('N/A') }}
+      Total Memory (MB): {{ ansible_net_memories.main.total_mb | default('N/A') }}
+      Free Diskspace (KB): {{ ansible_net_filesystems_info[flash_dir].spacefree_kb | default('N/A') }}
+      Total Diskspace (KB): {{ ansible_net_filesystems_info[flash_dir].spacetotal_kb | default('N/A') }}
+  tags: pre-check, check-version, install
 
     - name: Set the current time as a fact
       tags: backup, install
