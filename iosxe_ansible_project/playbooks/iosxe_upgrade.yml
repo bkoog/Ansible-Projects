@@ -35,7 +35,7 @@
   roles:
     - ansible-pyats
     
-    tasks:
+  tasks:
   - name: Gather facts for "{{ inventory_hostname }}"
     tags: pre-check, check-version, install, upgrade
     cisco.ios.ios_facts:
