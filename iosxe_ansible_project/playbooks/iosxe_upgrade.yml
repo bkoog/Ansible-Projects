@@ -52,8 +52,7 @@
       Free Diskspace (KB): "{{ ansible_net_filesystems_info[flash_dir].spacefree_kb | default('N/A') }}"
       Total Diskspace (KB): "{{ ansible_net_filesystems_info[flash_dir].spacetotal_kb | default('N/A') }}"
   tags: pre-check, check-version, install
-
-
+  
     - name: Set the current time as a fact
       tags: backup, install
       set_fact: timestamp="{{ lookup('pipe','date \"+%Y-%m-%d-%H-%M\"') }}"
