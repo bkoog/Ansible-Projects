@@ -5,7 +5,7 @@
   connection: network_cli
 
   vars:
-    flash_dir: "bootflash:"
+    flash_dir: "bootflash"
     target_xe_ver: "17.06.03a"
     target_image_path: "/users/muhammadrafi"
     target_image: "c8000aep-universalk9.17.06.03a.SPA.bin"
