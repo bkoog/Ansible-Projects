@@ -92,9 +92,9 @@
 
     - name: Assert enough disk space
       tags: image-copy, install
-        fail:
-          msg: "Not enough space on {{ flash_dir }} (need {{ target_image_size }} bytes)"
-        when: bytes_free < target_image_size
+      fail:
+        msg: "Not enough space on {{ flash_dir }} (need {{ target_image_size }} bytes)"
+      when: bytes_free < target_image_size
 
     - name: Check if image already exists
       tags: image-check, install
