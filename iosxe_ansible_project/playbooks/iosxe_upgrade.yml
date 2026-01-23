@@ -81,6 +81,7 @@
         commands:
           - dir {{ flash_dir }}
       register: disk_check
+      
     - debug:
         msg: "{{ dsk_chk.dir.keys() }}"
 
