@@ -88,12 +88,7 @@
     - name: Parse disk output via pyATS
       tags: pre-check, image-check, install
       set_fact:
-        bytes_free: >-
-      {{
-        disk_check.stdout[0]
-        | regex_search('([0-9]+) bytes free', '\\1')
-        | int
-      }}
+        bytes_free: "{{ disk_check.stdout[0] | regex_search('([0-9]+) bytes free', '\\1') | int }}"
 
     - name: Assert enough disk space
       tags: image-copy, install
