@@ -93,7 +93,7 @@
         success_msg: "Enough disk space available"
         fail_msg: "Not enough disk space"
         that:
-          - dsk_chk.dir[flash_dir + '/'].bytes_free | int > target_image_size
+          - dsk_chk.dir[flash_dir].bytes_free | int > target_image_size
 
     - name: Check if image already exists
       tags: image-check, install
