@@ -82,9 +82,6 @@
           - dir {{ flash_dir }}
       register: disk_check
       
-    - debug:
-        msg: "{{ dsk_chk.dir.keys() }}"
-
     - name: Parse disk output via pyATS
       tags: pre-check, image-check, install
       set_fact:
