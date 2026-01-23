@@ -88,15 +88,18 @@
     - name: Parse disk output via pyATS
       tags: pre-check, image-check, install
       set_fact:
-        dsk_chk: "{{ disk_check.stdout[0] | pyats_parser('dir', 'iosxe') }}"
+        bytes_free: >-
+      {{
+        disk_check.stdout[0]
+        | regex_search('([0-9]+) bytes free', '\\1')
+        | int
+      }}
 
     - name: Assert enough disk space
       tags: image-copy, install
-      assert:
-        success_msg: "Enough disk space available"
-        fail_msg: "Not enough disk space"
-        that:
-          - dsk_chk.dir[flash_dir].bytes_free | int > target_image_size
+        fail:
+          msg: "Not enough space on {{ flash_dir }} (need {{ target_image_size }} bytes)"
+        when: bytes_free < target_image_size
 
     - name: Check if image already exists
       tags: image-check, install
