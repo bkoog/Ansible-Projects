@@ -81,6 +81,11 @@
         commands:
           - dir {{ flash_dir }}
       register: disk_check
+
+    - name: Debug disk check output
+      tags: pre-check, image-check, install
+      debug:
+        var: disk_check
       
     - name: Parse disk output via pyATS
       tags: pre-check, image-check, install
