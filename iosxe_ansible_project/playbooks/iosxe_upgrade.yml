@@ -96,7 +96,7 @@
       tags: image-copy, install
       fail:
         msg: "Not enough space on {{ flash_dir }} (need {{ target_image_size }} bytes)"
-      when: bytes_free < target_image_size
+      when: (bytes_free | int) < (target_image_size | int)
 
     - name: Check if image already exists
       tags: image-check, install
