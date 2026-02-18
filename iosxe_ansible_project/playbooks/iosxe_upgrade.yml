@@ -101,16 +101,17 @@
         msg: "Not enough space on {{ flash_dir }} (need {{ target_image_size }} bytes)"
       when: (bytes_free | int) < (target_image_size | int)
 
-    - name: Check if image already exists
+    - name: Check if image exists directly
       tags: image-check, install
       cisco.ios.ios_command:
         commands:
-          - dir {{ flash_dir }}
-      register: image_check
+          - dir {{ flash_dir }}{{ target_image }}
+      register: file_check
+      ignore_errors: yes
 
-    - name: Determine if image exists
+    - name: Set image presence fact
       set_fact:
-        dir_image_check: "{{ image_check.stdout[0] | regex_search(target_image, multiline=True) }}"
+        image_present: "{{ 'No such file' not in file_check.stdout[0] }}"
 
     - name: Copy IOSXE image if missing
       when: dir_image_check is not defined
