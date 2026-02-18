@@ -116,10 +116,7 @@
     - name: Copy IOSXE image if missing
       when: dir_image_check is not defined
       block:
-        - name: Confirm image copy
-          pause:
-            prompt: "Press enter to start image copy or Ctrl+C to abort"
-
+      
         - name: Copy image via SCP
           when: protocol == "scp"
           cisco.ios.ios_command:
@@ -144,10 +141,6 @@
       rescue:
         - debug:
             msg: "Image copy failed – aborting"
-
-    - name: Confirm upgrade start
-      pause:
-        prompt: "Press enter to start upgrade or Ctrl+C to abort"
 
     - name: Install IOSXE
       block:
