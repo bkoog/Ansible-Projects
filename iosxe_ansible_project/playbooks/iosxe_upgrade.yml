@@ -111,7 +111,7 @@
 
     - name: Set image presence fact
       set_fact:
-        image_present: "{{ 'No such file' not in file_check.stdout[0] }}"
+        image_present: "{{ not file_check.failed | default(false) }}"
 
     - name: Copy IOSXE image if missing
       when: dir_image_check is not defined
