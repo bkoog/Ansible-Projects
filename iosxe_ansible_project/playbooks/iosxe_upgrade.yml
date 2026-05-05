@@ -118,7 +118,7 @@
       block:
       
         - name: Copy image via SCP
-          when: protocol == "scp"
+          when: (protocol | default('scp')) == "scp"
           cisco.ios.ios_command:
             commands:
               - command: >
