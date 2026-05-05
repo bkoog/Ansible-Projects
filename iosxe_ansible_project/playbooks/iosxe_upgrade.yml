@@ -6,11 +6,11 @@
 
   vars:
     flash_dir: "flash:"
-    target_xe_ver: "17.15.04"
+    target_xe_ver: "17.15.05"
     target_image_path: "/users/muhammadrafi"
-    target_image: "cat9k_lite_iosxe.17.15.04.SPA.bin"
+    target_image: "cat9k_lite_iosxe.17.15.05.SPA.bin"
     target_image_size: 503782075
-    target_image_md5: "be38038145abd342a18a2c92e8559d05"
+    target_image_md5: "2c45a0c8d3c3957484957f3cdcfa551e"
     
     vrf: mgmt-vrf
     install_check_mode: "no"
