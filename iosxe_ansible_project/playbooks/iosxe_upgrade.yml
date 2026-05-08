@@ -7,7 +7,7 @@
   vars:
     flash_dir: "flash:"
   
-    vrf: mgmt-vrf
+   
     install_check_mode: "no"
 
   roles:
@@ -118,7 +118,7 @@
             commands:
               - command: >
                   copy scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}/{{ target_image }}
-                  {{ flash_dir }} vrf {{ vrf }}
+                  {{ flash_dir }}
                 prompt:
                   - "Destination filename"
                 answer:
