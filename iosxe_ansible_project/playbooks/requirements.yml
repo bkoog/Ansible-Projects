@@ -1,3 +1,3 @@
-roles:
-  - name: ansible-pyats
-    src: https://github.com/CiscoDevNet/ansible-pyats
+collections:
+  - name: cisco.iosxe
+  - name: ansible.netcommon
