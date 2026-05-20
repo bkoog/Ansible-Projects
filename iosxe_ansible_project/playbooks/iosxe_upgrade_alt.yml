@@ -6,9 +6,11 @@
 
   vars:
     flash_dir: "flash:"
-  
-   
+    
     install_check_mode: "no"
+
+  roles:
+    - ansible-pyats
     
   tasks:
     - name: Gather IOS facts
