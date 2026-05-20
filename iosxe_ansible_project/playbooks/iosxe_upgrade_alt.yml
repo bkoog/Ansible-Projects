@@ -92,8 +92,8 @@
     - name: Validate disk space
       tags: image-copy, install
       assert:
-          that:
-           - (bytes_free | int) >= (target_image_size | int)
+        that:
+          - (bytes_free | int) >= (target_image_size | int)
         fail_msg: "Not enough space on {{ flash_dir }} (need {{ target_image_size }} bytes)"
         success_msg: "Enough space on {{ flash_dir }} (free={{ bytes_free }} bytes)"
 
