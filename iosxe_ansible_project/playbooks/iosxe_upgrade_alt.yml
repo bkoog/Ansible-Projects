@@ -9,10 +9,7 @@
   
    
     install_check_mode: "no"
-
-  roles:
-    - ansible-pyats
-
+    
   tasks:
     - name: Gather IOS facts
       tags: pre-check, check-version, install, upgrade
