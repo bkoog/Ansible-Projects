@@ -1,1 +1,191 @@
+---
+- name: IOSXE Upgrade Playbook
+  hosts: iosxe
+  gather_facts: false
+  connection: network_cli
 
+  vars:
+    flash_dir: "flash:"
+  
+   
+    install_check_mode: "no"
+
+  roles:
+    - ansible-pyats
+
+  tasks:
+    - name: Gather IOS facts
+      tags: pre-check, check-version, install, upgrade
+      cisco.ios.ios_facts:
+
+    - name: Show basic device facts
+      tags: pre-check, check-version, install
+      debug:
+        msg: |
+          Device Model: {{ ansible_net_model | default('unknown') }}
+          Serial Number: {{ ansible_net_serialnum | default('unknown') }}
+          IOSXE Version: {{ ansible_net_version | default('unknown') }}
+          IOSXE Image: {{ ansible_net_image | default('unknown') }}
+
+    - name: Set timestamp
+      tags: backup, install
+      set_fact:
+        timestamp: "{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M') }}"
+
+    - name: Backup running configuration
+      tags: backup, install
+      cisco.ios.ios_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_backup_{{ timestamp }}.cfg"
+          dir_path: "./backup"
+      register: config_output
+
+    - name: Starting pre-checks
+      tags: pre-check, install
+      debug:
+        msg: "Starting pre-checks ..."
+
+    - name: Get current IOSXE version
+      tags: pre-check, check-version, install
+      cisco.ios.ios_command:
+        commands:
+          - show version
+      register: show_version
+
+    - name: Parse IOSXE version via pyATS
+      tags: pre-check, check-version, install
+      set_fact:
+        current_xe_ver: "{{ show_version.stdout[0] | pyats_parser('show version', 'iosxe') }}"
+
+    - name: Show parsed IOSXE version
+      debug:
+        msg: "{{ inventory_hostname }} running {{ current_xe_ver.version.xe_version }}"
+
+    - name: Assert device is NOT already on target version
+      tags: pre-check, check-version, install
+      assert:
+        success_msg: "Upgrade required"
+        fail_msg: "Device already running target version {{ target_xe_ver }}"
+        that:
+          - current_xe_ver.version.xe_version != target_xe_ver
+
+    - name: Check disk space
+      tags: pre-check, image-check, install
+      cisco.ios.ios_command:
+        commands:
+          - dir {{ flash_dir }}
+      register: disk_check
+
+    - name: Debug disk check output
+      tags: pre-check, image-check, install
+      debug:
+        var: disk_check
+      
+    - name: Parse disk output safely
+      set_fact:
+        bytes_free: >-
+          {{ (disk_check.stdout[0]
+              | regex_findall('([0-9]+) bytes free')
+              | first
+              | default(0)) | int }}
+
+    - name: Assert enough disk space
+      tags: image-copy, install
+      fail:
+        msg: "Not enough space on {{ flash_dir }} (need {{ target_image_size }} bytes)"
+      when: (bytes_free | int) < (target_image_size | int)
+
+    - name: Check if image exists directly
+      tags: image-check, install
+      cisco.ios.ios_command:
+        commands:
+          - dir {{ flash_dir }}{{ target_image }}
+      register: file_check
+      ignore_errors: yes
+
+    - name: Set image presence fact
+      set_fact:
+        image_present: "{{ not file_check.failed | default(false) }}"
+
+    - name: Copy IOSXE image if missing
+      when: dir_image_check is not defined
+      block:
+      
+        - name: Copy image via SCP
+          when: (protocol | default('scp')) == "scp"
+          cisco.ios.ios_command:
+            commands:
+              - command: >
+                  copy scp://{{ scp_user }}:{{ scp_pass }}@{{ scp_server }}/{{ target_image }}
+                  {{ flash_dir }}
+                prompt:
+                  - "Destination filename"
+                answer:
+                  - "\r"
+          vars:
+            ansible_command_timeout: 1800
+
+        - name: Verify image MD5
+          cisco.ios.ios_command:
+            commands:
+              - verify /md5 {{ flash_dir }}{{ target_image }} {{ target_image_md5 }}
+          vars:
+            ansible_command_timeout: 600
+
+      rescue:
+        - debug:
+            msg: "Image copy failed – aborting"
+
+    - name: Install IOSXE
+      block:
+        - name: Save running config
+          cisco.ios.ios_command:
+            commands:
+              - command: copy run start
+                prompt: Destination filename
+                answer: "\r"
+
+        - name: Install target IOSXE
+          cisco.ios.ios_command:
+            commands:
+              - command: >
+                  install add file {{ flash_dir }}{{ target_image }}
+                  activate commit prompt-level none
+          vars:
+            ansible_command_timeout: 1800
+          register: install_output
+
+        - name: Wait for device to reconnect
+          wait_for_connection:
+            delay: 60
+            sleep: 30
+            timeout: 900
+
+      rescue:
+        - debug:
+            msg: "Upgrade failed"
+
+      always:
+        - name: Gather facts after upgrade
+          cisco.ios.ios_facts:
+
+        - name: Assert upgrade success
+          assert:
+            success_msg: "Upgrade successful"
+            fail_msg: "Upgrade failed"
+            that:
+              - ansible_net_version == target_xe_ver
+
+        - name: Cleanup inactive packages
+          cisco.ios.ios_command:
+            commands:
+              - command: install remove inactive
+                prompt: Do you want to remove the above files?
+                answer: "y"
+          vars:
+            ansible_command_timeout: 300
+
+        - name: Upgrade completed
+          debug:
+            msg: "Upgrade completed successfully"
