@@ -1,0 +1,27 @@
+---
+- name: Command Runner
+  hosts: iosxe
+  gather_facts: false
+
+  vars:
+    cli_commands: "{{ command_string.splitlines() }}"
+
+  tasks:
+    - name: Run commands
+      cisco.ios.ios_command:
+        commands: "{{ cli_commands }}"
+      register: command_output
+      ignore_errors: true
+
+    - name: Display successful output
+      debug:
+        var: command_output.stdout_lines
+      when: not command_output.failed | default(false)
+
+    - name: Display failure details
+      debug:
+        msg:
+          - "Command execution failed on {{ inventory_hostname }}"
+          - "Error: {{ command_output.msg | default('Unknown error') }}"
+          - "Full result: {{ command_output }}"
+      when: command_output.failed | default(false)
