@@ -5,6 +5,8 @@
   connection: network_cli
   
   vars:
+    ansible_connection: network_cli
+    ansible_network_os: cisco.ios.ios
     cli_commands: "{{ command_string.splitlines() }}"
 
   tasks:
