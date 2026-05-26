@@ -2,7 +2,8 @@
 - name: Command Runner
   hosts: iosxe
   gather_facts: false
-
+  connection: network_cli
+  
   vars:
     cli_commands: "{{ command_string.splitlines() }}"
 
